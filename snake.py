@@ -24,6 +24,8 @@ class Snake:
 
         self.head = self._head_image.get_rect()
 
+        self._eat_sound = pygame.mixer.Sound("music/pacman_eatfruit.wav") 
+
     def sumTuples(self, a: Tuple, b: Tuple):
         # return tuple(map(operator.add, a, b)
         [width, height] = self._display.get_size()
@@ -76,6 +78,7 @@ class Snake:
 
     def grow(self):
         self.eat = True
+        self._eat_sound.play()
 
     def can_spawn_fruit(self,position: Tuple):
       return position != self._head_coords and position not in self._body_coords
