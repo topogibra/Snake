@@ -1,3 +1,4 @@
+from curses import KEY_RIGHT
 import pygame
 from pygame.locals import *
 
@@ -9,7 +10,6 @@ class App:
         self._running = True
         self._display_surf = None
         self.size = self.weight, self.height = 1280, 720
-
 
     def on_init(self):
         pygame.init()
@@ -23,11 +23,22 @@ class App:
     def on_event(self, event):
         if event.type == pygame.QUIT:
             self._running = False
+        if event.type == pygame.KEYDOWN:
+            keys = pygame.key.get_pressed()
+            if keys[K_RIGHT] or keys[K_d]:
+                self.snake.right()
+            if keys[K_LEFT] or keys[K_a]:
+                self.snake.left()
+            if keys[K_UP] or keys[K_w]:
+                self.snake.up() 
+            if keys[K_DOWN] or keys[K_s]:
+                self.snake.()
 
     def on_loop(self):
         pass
 
     def on_render(self):
+        self._display_surf.fill((0, 0, 0))
         self.snake.draw()
         pygame.display.flip()
 
