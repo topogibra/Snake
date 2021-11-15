@@ -32,7 +32,7 @@ class App:
             if keys[K_UP] or keys[K_w]:
                 self.snake.up() 
             if keys[K_DOWN] or keys[K_s]:
-                self.snake.()
+                self.snake.down()
 
     def on_loop(self):
         pass
