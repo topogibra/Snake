@@ -19,6 +19,8 @@ class App:
         self.snake = Snake(self._display_surf)
         self._running = True
         self._image_surf = pygame.image.load("images/snakeBody.bmp")
+        self._snake_ticks = 300
+        self._last_ticks = pygame.time.get_ticks()
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -35,7 +37,10 @@ class App:
                 self.snake.down()
 
     def on_loop(self):
-        pass
+        current_ticks = pygame.time.get_ticks()
+        if abs(self._last_ticks - current_ticks) >= self._snake_ticks:
+            self._last_ticks = current_ticks
+            self.snake.move_update()
 
     def on_render(self):
         self._display_surf.fill((0, 0, 0))

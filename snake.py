@@ -11,13 +11,14 @@ class Snake:
         self._body = deque()
         self._body.append((640, 344))
         self._default_speed = 16
+        self._movement = (self._default_speed, 0)
         # Image Loading
         self._head_image = pygame.image.load("images/snakeHead.bmp")
         self._body_image = pygame.image.load("images/snakeBody.bmp")
         self._tail_image = pygame.image.load("images/snakeTail.bmp")
-    
-    def sumTuples(a:Tuple,b:Tuple):
-      return tuple(map(operator.add,a,b))
+
+    def sumTuples(a: Tuple, b: Tuple):
+        return tuple(map(operator.add, a, b))
 
     def draw(self):
         # Head
@@ -28,21 +29,32 @@ class Snake:
         # Tail
         # self._display.blit(self._tail_image, self._body[-1])
 
-    def move_update(self, movement: Tuple):
-        new_head_coords = Snake.sumTuples(self._head_coords,movement)
-        if new_head_coords != self._body[0]:
-          self._body.appendleft(self._head_coords)
-          self._head_coords = new_head_coords
-          self._body.pop()
+    def can_move(self, movement: Tuple):
+        return Snake.sumTuples(self._head_coords, movement) != self._body[0]
+
+    def move_update(self):
+        new_head_coords = Snake.sumTuples(self._head_coords, self._movement)
+        if self.can_move(self._movement):
+            self._body.appendleft(self._head_coords)
+            self._head_coords = new_head_coords
+            self._body.pop()
 
     def left(self):
-        self.move_update((-self._default_speed, 0))
-        
+        movement = (-self._default_speed, 0)
+        self._movement = movement if self.can_move(
+            movement) else self._movement
+
     def right(self):
-        self.move_update((self._default_speed, 0))
+        movement = (self._default_speed, 0)
+        self._movement = movement if self.can_move(
+            movement) else self._movement
 
     def up(self):
-        self.move_update((0, -self._default_speed))
-    
+        movement = (0, -self._default_speed)
+        self._movement = movement if self.can_move(
+            movement) else self._movement
+
     def down(self):
-        self.move_update((0, self._default_speed))
+        movement = (0, self._default_speed)
+        self._movement = movement if self.can_move(
+            movement) else self._movement
