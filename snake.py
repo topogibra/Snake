@@ -17,8 +17,13 @@ class Snake:
         self._body_image = pygame.image.load("images/snakeBody.bmp")
         self._tail_image = pygame.image.load("images/snakeTail.bmp")
 
-    def sumTuples(a: Tuple, b: Tuple):
-        return tuple(map(operator.add, a, b))
+    def sumTuples(self,a: Tuple, b: Tuple):
+        # return tuple(map(operator.add, a, b)
+        [width, height] = self._display.get_size()
+        return (
+            (a[0] + b[0]) % width,
+            (a[1] + b[1]) % height        
+        )
 
     def draw(self):
         # Head
@@ -30,10 +35,10 @@ class Snake:
         # self._display.blit(self._tail_image, self._body[-1])
 
     def can_move(self, movement: Tuple):
-        return Snake.sumTuples(self._head_coords, movement) != self._body[0]
+        return self.sumTuples(self._head_coords, movement) != self._body[0]
 
     def move_update(self):
-        new_head_coords = Snake.sumTuples(self._head_coords, self._movement)
+        new_head_coords = self.sumTuples(self._head_coords, self._movement)
         if self.can_move(self._movement):
             self._body.appendleft(self._head_coords)
             self._head_coords = new_head_coords
