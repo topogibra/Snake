@@ -79,3 +79,6 @@ class Snake:
 
     def can_spawn_fruit(self,position: Tuple):
       return position != self._head_coords and position not in self._body_coords
+
+    def hit_body(self):
+      return self._head_coords in self._body_coords

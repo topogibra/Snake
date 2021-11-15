@@ -12,8 +12,8 @@ class Fruit:
         pass
 
     def randomPosition(self):
-        x = randint(0, self._display.get_width() // 16) * 16
-        y = randint(0, self._display.get_height() // 16) * 16
+        x = randint(0, (self._display.get_width() - 1) // 16) * 16
+        y = randint(0, (self._display.get_height() - 1) // 16) * 16
         return (x,y)
         
 

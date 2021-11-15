@@ -19,16 +19,19 @@ class App:
             self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
 
+        self.fruit_coutner = 0
+
         self.snake = Snake(self._display_surf)
-        self._snake_ticks = 20
+        self._snake_ticks = 200
+        self._shift_speed_up = False
         self._last_ticks = pygame.time.get_ticks()
 
         self.fruit = Fruit(self._display_surf)
 
-    def on_event(self, event):
-        if event.type == pygame.QUIT:
+    def on_event(self):
+        if pygame.event.get(pygame.QUIT):
             self._running = False
-        if event.type == pygame.KEYDOWN:
+        if  pygame.event.get(pygame.KEYDOWN):
             keys = pygame.key.get_pressed()
             if keys[K_RIGHT] or keys[K_d]:
                 self.snake.right()
@@ -40,6 +43,14 @@ class App:
                 self.snake.down()
             if keys[K_q]:
                 self.fruit.coords = self.fruit.randomPosition()
+            if keys[K_LSHIFT] and not self._shift_speed_up:
+                self._snake_ticks = self._snake_ticks // 20
+                self._shift_speed_up = True
+        event = pygame.event.get(pygame.KEYUP)
+        if event:
+            if event[0].key == K_LSHIFT:
+                self._snake_ticks = self._snake_ticks * 20
+                self._shift_speed_up = False
 
     def on_loop(self):
         # move snake along with time
@@ -53,13 +64,19 @@ class App:
         self.snake.draw()
         self.fruit.draw()
         # colide detection
+        if self.snake.hit_body():
+            self._running = False
         if self.fruit.rect.colliderect(self.snake.head):
-            print(self.snake._head_coords)
+            print("Snake ate fruit @ ", self.snake._head_coords)
             self.snake.grow()
             randomPosition = self.fruit.randomPosition()
             while not self.snake.can_spawn_fruit(randomPosition):
                 randomPosition = self.fruit.randomPosition()
             self.fruit.coords = randomPosition
+            # increase game speed
+            new_speed = self._snake_ticks - 10
+            self._snake_ticks = new_speed if new_speed >= 100 else self._snake_ticks
+        
         pygame.display.flip()
 
     def on_cleanup(self):
@@ -70,8 +87,7 @@ class App:
             self._running = False
 
         while(self._running):
-            for event in pygame.event.get():
-                self.on_event(event)
+            self.on_event()
             self.on_loop()
             self.on_render()
         self.on_cleanup()
