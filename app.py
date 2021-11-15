@@ -1,6 +1,7 @@
 from curses import KEY_RIGHT
 import pygame
 from pygame.locals import *
+from fruit import Fruit
 
 from snake import Snake
 
@@ -16,11 +17,13 @@ class App:
         pygame.display.set_caption("Snake")
         self._display_surf = pygame.display.set_mode(
             self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
-        self.snake = Snake(self._display_surf)
         self._running = True
-        self._image_surf = pygame.image.load("images/snakeBody.bmp")
-        self._snake_ticks = 300
+
+        self.snake = Snake(self._display_surf)
+        self._snake_ticks = 20
         self._last_ticks = pygame.time.get_ticks()
+
+        self.fruit = Fruit(self._display_surf)
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -32,11 +35,14 @@ class App:
             if keys[K_LEFT] or keys[K_a]:
                 self.snake.left()
             if keys[K_UP] or keys[K_w]:
-                self.snake.up() 
+                self.snake.up()
             if keys[K_DOWN] or keys[K_s]:
                 self.snake.down()
+            if keys[K_q]:
+                self.fruit.coords = self.fruit.randomPosition()
 
     def on_loop(self):
+        # move snake along with time
         current_ticks = pygame.time.get_ticks()
         if abs(self._last_ticks - current_ticks) >= self._snake_ticks:
             self._last_ticks = current_ticks
@@ -45,6 +51,15 @@ class App:
     def on_render(self):
         self._display_surf.fill((0, 0, 0))
         self.snake.draw()
+        self.fruit.draw()
+        # colide detection
+        if self.fruit.rect.colliderect(self.snake.head):
+            print(self.snake._head_coords)
+            self.snake.grow()
+            randomPosition = self.fruit.randomPosition()
+            while not self.snake.can_spawn_fruit(randomPosition):
+                randomPosition = self.fruit.randomPosition()
+            self.fruit.coords = randomPosition
         pygame.display.flip()
 
     def on_cleanup(self):
