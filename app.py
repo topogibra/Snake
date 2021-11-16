@@ -22,10 +22,11 @@ class App:
             self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
         self._speed_sound = pygame.mixer.Sound("music/car.wav")
+        self._speed_sound.set_volume(0.10)
 
         # Music
         pygame.mixer.init()
-        pygame.mixer.music.load("music/soviet_union_national_anthem.mp3")
+        pygame.mixer.music.load("music/music.ogg")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.10)
 
